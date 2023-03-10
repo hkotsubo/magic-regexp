@@ -1,21 +1,23 @@
 import re
 from enum import Enum
-from typing import Any, Union
+from typing import Any, Callable, Union
 
 
 def debug(msg: Any):
     print(f'RegexBuilder::debug --> {msg}')
 
 
-class Tipos(Enum):
-    caracter = '.'
+class Tipos:
+    qualquer = '.'
     numero = '\d'
+    fora_numero = '\D'
+    letra = '\w'
+    fora_letra = '\W'
+    espaco_em_branco = '\s'
+    fora_espaco_em_branco = '\S'
 
-
-def tipos_parser(data: Union[str, Tipos]):
-    if not isinstance(data, Tipos):
-        return str(data)
-    return str(data.value)
+    def intervalo(self, inicio: Any, fim: Any):
+        return f'[{inicio}-{fim}]'
 
 
 class Flags(Enum):
@@ -35,46 +37,51 @@ def flags_parser(data: Any):
 
 class RegexConstrutor:
     def __init__(self):
-        self._regex_texto = str()
-        self._builded = False
+        self._regex_string = str()
         self._regex_object = None
 
-    def contenha(self, texto: Union[str, Tipos]):
-        self._regex_texto += tipos_parser(texto)
+        self.tipos = Tipos()
+
+    def contenha(self, texto: str):
+        self._regex_string += texto
         return self
 
-    def comeca_com(self, texto: Union[str, Tipos]):
-        self._regex_texto += '^' + tipos_parser(texto)
+    def comeca_com(self, texto: str):
+        self._regex_string += '^' + texto
         return self
 
-    def termina_com(self, texto: Union[str, Tipos]):
-        self._regex_texto += tipos_parser(texto) + '$'
+    def termina_com(self, texto: str):
+        self._regex_string += texto + '$'
         return self
 
-    def zero_ou_um(self, texto: Union[str, Tipos]):
-        self._regex_texto += tipos_parser(texto) + '?'
+    def zero_ou_um(self, texto: str):
+        self._regex_string += texto + '?'
         return self
 
-    def zero_ou_mais(self, texto: Union[str, Tipos]):
-        self._regex_texto += tipos_parser(texto) + '*'
+    def zero_ou_mais(self, texto: str):
+        self._regex_string += texto + '*'
         return self
 
-    def um_ou_mais(self, texto: Union[str, Tipos]):
-        self._regex_texto += tipos_parser(texto) + '+'
+    def um_ou_mais(self, texto: str):
+        self._regex_string += texto + '+'
         return self
 
-    def exatamente_n(self, vezes: int, texto: Union[str, Tipos]):
-        self._regex_texto += tipos_parser(texto) + '{' + str(vezes) + '}'
+    def exatamente_n(self, vezes: int, texto: str):
+        self._regex_string += texto + '{' + str(vezes) + '}'
         return self
 
-    def n_ou_mais(self, vezes: int, texto: Union[str, Tipos]):
-        self._regex_texto += tipos_parser(texto) + '{' + str(vezes) + ',}'
+    def n_ou_mais(self, vezes: int, texto: str):
+        self._regex_string += texto + '{' + str(vezes) + ',}'
         return self
 
     def construir(self, *flags: Flags):
         self._regex_object = re.compile(
-            r'' + self._regex_texto, flags_parser(flags)
+            r'' + self._regex_string,
+            flags_parser(flags),
         )
-        self._builded = True
+
+        self._regex_string = str()
+
         debug(self._regex_object)
+
         return self._regex_object
