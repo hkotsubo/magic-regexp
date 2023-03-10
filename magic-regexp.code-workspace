@@ -1,0 +1,41 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "editor.wordWrap": "on",
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true,
+            "source.organizeImports": true
+        },
+        "editor.inlayHints.enabled": "on",
+        "python.analysis.inlayHints.variableTypes": true,
+        "python.analysis.inlayHints.functionReturnTypes": true,
+        "python.linting.enabled": true,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "python.analysis.diagnosticMode": "workspace",
+        "python.analysis.typeCheckingMode": "strict",
+        // Auto run commands on save
+        "emeraldwalk.runonsave": {
+            "commands": [
+                {
+                    "match": ".*",
+                    "cmd": "blue ."
+                },
+                {
+                    "match": ".*",
+                    "cmd": "isort ."
+                },
+            ]
+        }
+    },
+    "extensions": {
+        "recommendations": [
+            "emeraldwalk.RunOnSave",
+            "matangover.mypy"
+        ]
+    },
+}
